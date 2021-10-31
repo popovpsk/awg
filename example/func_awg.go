@@ -24,3 +24,33 @@ func (s *Service) GetByIdAsync(ctx context.Context, number []*json.Number, str [
 		return p0, p1
 	}
 }
+
+// RunAsync generated async wrapper for Run function
+func (s *Service) RunAsync(ctx context.Context, number []*json.Number, str []string, n *int, q map[string]*rand.Rand, cl Closer, i interface{}) func() {
+	var (
+		done = make(chan struct{})
+	)
+	go func() {
+		defer close(done)
+		s.Run(ctx, number, str, n, q, cl, i)
+	}()
+	return func() {
+		<-done
+		return
+	}
+}
+
+// Run2Async generated async wrapper for Run2 function
+func Run2Async() func() {
+	var (
+		done = make(chan struct{})
+	)
+	go func() {
+		defer close(done)
+		Run2()
+	}()
+	return func() {
+		<-done
+		return
+	}
+}
